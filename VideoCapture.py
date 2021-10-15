@@ -1,5 +1,6 @@
 from threading import Thread
 from cv2 import VideoCapture
+import MainRunner as runner
 
 
 class VideoCapture:
@@ -19,13 +20,8 @@ class VideoCapture:
             if not self.grabbed:
                 self.stopCapture()
             else:
-                (curr_grab, curr_frame) = self.stream.read()
-                if len(self.frame_seq) < 30:
-                    self.frame_seq.append(curr_frame)
-                else:
-                    self.frame_seq = self.frame_seq[1:]
-                    self.frame_seq.append(curr_frame)
-                (self.grabbed, self.frame) = (curr_grab, curr_frame)
+                (self.grabbed, self.frame) = self.stream.read()
+                runner.CURRENT_IMAGE = self.frame
 
     def stopCapture(self):
         self.stopFlag = True
