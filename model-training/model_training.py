@@ -1,4 +1,4 @@
-from sklearn.model_selection import train_test_split
+# from sklearn.model_selection import train_test_split
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
