@@ -8,7 +8,7 @@ import MainRunner as runner
 
 class InferenceEngine:
 
-    def __init__(self, class_labels, model_path='/home/pi',):
+    def __init__(self, class_labels, model_path="/home/pi"):
         self.mediapipe = mp.solutions.holistic.Holistic(
             min_detection_confidence=0.5, min_tracking_confidence=0.5)
         self.interpreter = Interpreter(model_path=model_path + "/model.tflite")

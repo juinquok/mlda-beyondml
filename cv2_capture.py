@@ -60,7 +60,7 @@ sentence = []  # concat history of detections
 predictions = []
 max_words = 6
 threshold = 0.7
-actions = np.array(['hire','me','please','Google'])
+actions = np.array(['hire', 'me', 'please', 'Google'])
 
 # model = Sequential()
 # model.add(LSTM(64, return_sequences=True,
@@ -76,64 +76,69 @@ actions = np.array(['hire','me','please','Google'])
 interpreter = Interpreter(model_path="/home/pi/action_hireme_rhlh.tflite")
 
 interpreter.allocate_tensors()
-input_details=interpreter.get_input_details()
-output_details=interpreter.get_output_details()
-input_shape=input_details[0]['shape']
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
+input_shape = input_details[0]['shape']
 
 
 def predict(image_data, input_details, output_details):
 
-    input_img = np.array(image_data,dtype=np.float32)
+    input_img = np.array(image_data, dtype=np.float32)
     interpreter.set_tensor(0, input_img)
     interpreter.invoke()
-    output_data=interpreter.get_tensor(output_details[0]['index'])
+    output_data = interpreter.get_tensor(output_details[0]['index'])
     print("raw output: "+str(output_data))
     return output_data
 
 
-cap=cv2.VideoCapture(0)
-# tts = pyttsx3.init()           #for tts
-# tts.setProperty('rate', 85)
+cap = cv2.VideoCapture(0)
+tts = pyttsx3.init()  # for tts
+tts.setProperty('rate', 85)
 
 # Set mediapipe model
-with mp_holistic.Holistic(min_detection_confidence = 0.5, min_tracking_confidence = 0.5) as holistic:
+with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
     while cap.isOpened():
 
         # Read feed
-        ret, frame=cap.read()
+        ret, frame = cap.read()
 
         # Make detections
-        image, results=mediapipe_detection(frame, holistic)
+        image, results = mediapipe_detection(frame, holistic)
         # print(results)
 
         # Draw landmarks
         # draw_styled_landmarks(image, results)
 
         # 2. Prediction logic
-        keypoints=extract_keypoints(results)
+        keypoints = extract_keypoints(results)
         sequence.append(keypoints)
-        sequence=sequence[-30:]
+        sequence = sequence[-30:]
 
 #         once sequence has 30 frames
         if len(sequence) == 30:
             # res = model.predict(np.expand_dims(sequence, axis=0))[0]
-            res=predict(np.expand_dims(sequence, axis=0),
-                        input_details, output_details)[0]
+            res = predict(np.expand_dims(sequence, axis=0),
+                          input_details, output_details)[0]
             predictions.append(np.argmax(res))
+            pred = np.argmax(res)
             print(actions[np.argmax(res)])
+            if res[pred] > 0.7:
+                tts.say(actions[np.argmax(res)])
+                tts.runAndWait()
 
         # #3. Viz logic
-            if np.unique(predictions[-10:])[0]==np.argmax(res):
-                if res[np.argmax(res)] > threshold:
-                    if len(sentence) > 0:
-                        if actions[np.argmax(res)] != sentence[-1]:    #append only if next action is different
-                            sentence.append(actions[np.argmax(res)])
-                            print(actions[np.argmax(res)])
+            # if np.unique(predictions[-10:])[0] == np.argmax(res):
+            #     if res[np.argmax(res)] > threshold:
+            #         if len(sentence) > 0:
+            #             # append only if next action is different
+            #             if actions[np.argmax(res)] != sentence[-1]:
+            #                 sentence.append(actions[np.argmax(res)])
+            #                 print(actions[np.argmax(res)])
         #                     tts.say(actions[np.argmax(res)])
         #                     tts.runAndWait()
-                        else:
-                            sentence.append(actions[np.argmax(res)])
-                            print(actions[np.argmax(res)])
+                # else:
+                #     sentence.append(actions[np.argmax(res)])
+                #     print(actions[np.argmax(res)])
         #                 tts.say(actions[np.argmax(res)])
         #                 tts.runAndWait()
 
