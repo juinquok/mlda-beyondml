@@ -5,15 +5,15 @@ import mediapipe as mp
 from tensorflow.lite.python.interpreter import Interpreter
 from cv2 import cvtColor, COLOR_BGR2RGB, COLOR_RGB2BGR
 import numpy as np
-import config_utils as config_utils
 import pyttsx3
 
 WORK_DIR = os.path.expandvars(os.environ.get("PWD"))
-CLASS_LABELS = array(['hire', 'me', 'please', 'Google'])
+CLASS_LABELS = array(
+    ['giddy', 'few', 'months', 'uncomfortable', 'no', 'room', 'spin', 'allergic'])
 
 mediapipe = mp.solutions.holistic.Holistic(
     min_detection_confidence=0.5, min_tracking_confidence=0.5)
-interpreter = Interpreter(model_path=WORK_DIR + "/model.tflite")
+interpreter = Interpreter(model_path=WORK_DIR + "/medicine.tflite")
 interpreter.allocate_tensors()
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()

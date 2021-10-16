@@ -8,7 +8,7 @@ import pyttsx3
 
 class InferenceEngine:
 
-    def __init__(self, class_labels, model_path="/home/pi"):
+    def __init__(self, class_labels, camera, model_path="/home/pi"):
         self.mediapipe = mp.solutions.holistic.Holistic(
             min_detection_confidence=0.5, min_tracking_confidence=0.5)
         self.interpreter = Interpreter(
@@ -25,7 +25,7 @@ class InferenceEngine:
         self.stopFlag = False
         self.tts = pyttsx3.init()
         self.tts.setProperty('rate', 90)
-        self.video = None
+        self.video = camera
 
     def startPrediction(self):
         prediction_thread = Thread(target=self.predict, args=()).start()

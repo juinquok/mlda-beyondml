@@ -1,5 +1,6 @@
 from threading import Thread
 import cv2
+import config_utils as config_utils
 
 
 class VideoCapture:
@@ -11,8 +12,8 @@ class VideoCapture:
         self.frame = None
 
     def startCapture(self):
-        Thread(target=self.getFrames, args=()).start()
-        return self
+        camera = Thread(target=self.getFrames, args=()).start()
+        return camera
 
     def getFrames(self):
         global CURRENT_IMAGE
