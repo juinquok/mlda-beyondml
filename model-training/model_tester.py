@@ -40,6 +40,8 @@ def extract_keypoints(results):
     rh = np.array([[res.x, res.y, res.z] for res in results.right_hand_landmarks.landmark]).flatten() if results.right_hand_landmarks else np.zeros(21*3)
     return np.concatenate([lh, rh])
 
+actions = np.array(['giddy', 'few', 'months', 'uncomfortable', 'no', 'room', 'spin', 'allergic'])
+
 # Define model
 model = Sequential()
 model.add(LSTM(64, return_sequences=True, activation='relu', input_shape=(30,126)))
@@ -57,7 +59,7 @@ sequence = []        #collect the 30 frames to generate a prediction
 sentence = []        #concat history of detections
 predictions = []
 max_words = 8
-threshold = 0.7
+threshold = 0.9
 
 cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
@@ -104,7 +106,7 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                         tts.say(actions[np.argmax(res)])
                         tts.runAndWait()
 
-            if len(sentence) > max_words:          #just grab the last 5 values when sentence has more than 6 words
+            if len(sentence) > max_words:          #just grab the last x values
                 sentence = sentence[-max_words:]
             
         cv2.rectangle(image, (0,0), (1280, 40), (245, 139, 76), -1)

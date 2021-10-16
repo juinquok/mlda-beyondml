@@ -38,6 +38,11 @@ Although simple, our model has the following benefits:
 ### model_tester.py
 Code to test the model on a live camera feed (current device) using OpenCV. Outputs predicted text on video feed and has text-to-speech implemented.
 
+When testing model:
+1. Adjust threshold accordingly (determines probability in which predicition is accepted).
+2. As dataset is small, position matters. User should position themselves in the centre of the video feed and be about one arms length away from the computer.
+3. Ensure that hand is being detected.
+
 
 ### tflite_converter.py
 Converts .h5 model to .tflite for deployment to the edge. TensorFlow Lite is a set of tools that enables on-device machine learning by helping developers run their models on mobile, embedded, and IoT devices.
